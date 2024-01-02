@@ -10,13 +10,62 @@ import imgurUtil
 
 struct SearchView: View {
     @ObservedObject var searchVM: SearchViewModel
+    @State var listSelection: Bool = false
+    
+    
+    let gridColumns: [GridItem] = [
+        GridItem(.flexible(), spacing: nil, alignment: nil),
+        GridItem(.flexible(), spacing: nil, alignment: nil),
+        GridItem(.flexible(), spacing: nil, alignment: nil)
+    ]
+    
+    let listColumns: [GridItem] = [
+        GridItem(.flexible(), spacing: nil, alignment: nil),
+    ]
+    
     var body: some View {
-        List(searchVM.images) { image in
-            Rectangle()
-                .frame(height: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/)
-        }
-        .overlay {
-            listSearchOverLay
+        
+        imageContainer
+            .navigationTitle("Switch Animation")
+            .toolbar(content: {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: {
+                        listSelection.toggle()
+                    }, label: {
+                        Text(listSelection ? "List" : "Grid")
+                    })
+                }
+            })
+            .overlay {
+                listSearchOverLay
+            }
+    }
+    
+    @ViewBuilder
+    private var imageContainer: some View {
+        if listSelection {
+            ScrollView {
+                LazyVGrid(columns: gridColumns, content: {
+                    ForEach(searchVM.images) { item in
+                        
+                        ImageCell(gallery: item)
+                            .frame(height: 150)
+                    }
+                })
+                .padding(.horizontal)
+            }
+        } else {
+            ScrollView {
+                LazyVGrid(columns: listColumns, content: {
+                    ForEach(searchVM.images) { item in
+//                        Rectangle()
+//                            .frame(height: 260)
+                        ImageCell(gallery: item)
+                            .frame(height: 260)
+                    }
+                })
+                .padding(.horizontal)
+            }
         }
     }
     
@@ -35,6 +84,35 @@ struct SearchView: View {
             EmptyStateView(text: searchVM.emptyStateListText)
             
         default: EmptyView()
+        }
+    }
+    
+    struct ImageCell:View {
+        let gallery: Gallery
+        
+        var url:URL?{
+            let link = gallery.imageURL
+            return URL(string: link)
+        }
+        
+        var body: some View {
+            AsyncImage(url: url) { phase in
+                if let image = phase.image {
+                    image.resizable(resizingMode: .stretch)
+                } else if phase.error != nil {
+                    Color.red // Indicates an error.
+                } else {
+                    Rectangle()
+                        .fill(Color.gray.gradient.opacity(0.2)) // Acts as a placeholder.
+                        .overlay(content: {
+                            Spacer()
+                            ProgressView()
+                                .progressViewStyle(.circular)
+                            Spacer()
+                        })
+                }
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 25.0))
         }
     }
 }

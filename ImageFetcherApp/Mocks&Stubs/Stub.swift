@@ -23,7 +23,7 @@ extension Gallery {
     static var stubs: [Gallery]{
         [
             Gallery(
-                id: "E7FhX3f",
+                id: "E7FhX3f1",
                 title: "Test Image",
                 dateTime: 1704145653,
                 imageCount: 2,
@@ -34,7 +34,18 @@ extension Gallery {
             ),
             
             Gallery(
-                id: "E7FhX3f",
+                id: "E7FhX3f2",
+                title: "Test Image",
+                dateTime: 1704145653,
+                imageCount: 2,
+                images: [
+//                            ImageInfo(type: "image/jpeg", link: "https://i.imgur.com/ihJMFd2.jpg"),
+//                            ImageInfo(type: "image/jpeg", link: "https://i.imgur.com/QxJPGwt.jpg")
+                        ]
+            ),
+            
+            Gallery(
+                id: "E7FhX3f3",
                 title: "Test Image",
                 dateTime: 1704145653,
                 imageCount: 2,
@@ -43,9 +54,8 @@ extension Gallery {
                             ImageInfo(type: "image/jpeg", link: "https://i.imgur.com/QxJPGwt.jpg")
                         ]
             ),
-            
             Gallery(
-                id: "E7FhX3f",
+                id: "E7FhX3f4",
                 title: "Test Image",
                 dateTime: 1704145653,
                 imageCount: 2,
