@@ -9,9 +9,12 @@ import SwiftUI
 
 @main
 struct ImageFetcherAppApp: App {
+    @StateObject var searchVM = SearchViewModel()
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            NavigationStack {
+                SearchView(searchVM: searchVM)
+            }
         }
     }
 }

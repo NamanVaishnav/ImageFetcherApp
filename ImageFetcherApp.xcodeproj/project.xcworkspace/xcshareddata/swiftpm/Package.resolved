@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "imgurutil",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/NamanVaishnav/imgurUtil",
+      "state" : {
+        "branch" : "main",
+        "revision" : "8ba83e74b2fcee001d9c6cadbb9095761a2dc918"
+      }
+    }
+  ],
+  "version" : 2
+}
