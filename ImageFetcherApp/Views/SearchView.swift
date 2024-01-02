@@ -11,7 +11,31 @@ import imgurUtil
 struct SearchView: View {
     @ObservedObject var searchVM: SearchViewModel
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        List(searchVM.images) { image in
+            Rectangle()
+                .frame(height: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/)
+        }
+        .overlay {
+            listSearchOverLay
+        }
+    }
+    
+    @ViewBuilder
+    private var listSearchOverLay: some View {
+        switch searchVM.phase {
+            
+        case .fetching:
+            LoadingStateView()
+            
+        case .failure(let error):
+            ErrorStateView(error: error.localizedDescription) {
+                // Reload Search Results
+            }
+        case .empty:
+            EmptyStateView(text: searchVM.emptyStateListText)
+            
+        default: EmptyView()
+        }
     }
 }
 
@@ -25,6 +49,7 @@ struct SearchView_Preview : PreviewProvider {
     
     @StateObject static var emptySearchVM: SearchViewModel = {
         let vm = SearchViewModel()
+        vm.query = "Apple"
         vm.phase = .empty
         return vm
     }()
@@ -32,7 +57,7 @@ struct SearchView_Preview : PreviewProvider {
     @StateObject static var loadingSearchVM: SearchViewModel = {
         let vm = SearchViewModel()
         vm.query = "HeyEmptysdnasjdfn"
-        vm.phase = .empty
+        vm.phase = .fetching
         return vm
     }()
     
@@ -42,8 +67,6 @@ struct SearchView_Preview : PreviewProvider {
         vm.phase = .failure(NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "An Error has been occured"]))
         return vm
     }()
-    
-    
     
     static var previews: some View {
         Group {
