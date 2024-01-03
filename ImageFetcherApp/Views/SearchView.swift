@@ -26,6 +26,9 @@ struct SearchView: View {
     var body: some View {
         
         imageContainer
+            .padding(.horizontal)
+            .searchable(text: $searchVM.query, placement: .navigationBarDrawer(displayMode: .always))
+            .navigationBarTitleDisplayMode(.inline)
             .navigationTitle("Switch Animation")
             .toolbar(content: {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -36,9 +39,11 @@ struct SearchView: View {
                     })
                 }
             })
+            
             .overlay {
                 listSearchOverLay
             }
+            
     }
     
     @ViewBuilder
@@ -47,24 +52,19 @@ struct SearchView: View {
             ScrollView {
                 LazyVGrid(columns: gridColumns, content: {
                     ForEach(searchVM.images) { item in
-                        
                         ImageCell(gallery: item)
                             .frame(height: 150)
                     }
                 })
-                .padding(.horizontal)
             }
         } else {
             ScrollView {
                 LazyVGrid(columns: listColumns, content: {
                     ForEach(searchVM.images) { item in
-//                        Rectangle()
-//                            .frame(height: 260)
                         ImageCell(gallery: item)
                             .frame(height: 260)
                     }
                 })
-                .padding(.horizontal)
             }
         }
     }
@@ -79,6 +79,9 @@ struct SearchView: View {
         case .failure(let error):
             ErrorStateView(error: error.localizedDescription) {
                 // Reload Search Results
+                Task {
+                    await searchVM.searchImages()
+                }
             }
         case .empty:
             EmptyStateView(text: searchVM.emptyStateListText)
@@ -96,23 +99,35 @@ struct SearchView: View {
         }
         
         var body: some View {
-            AsyncImage(url: url) { phase in
-                if let image = phase.image {
-                    image.resizable(resizingMode: .stretch)
-                } else if phase.error != nil {
-                    Color.red // Indicates an error.
-                } else {
-                    Rectangle()
-                        .fill(Color.gray.gradient.opacity(0.2)) // Acts as a placeholder.
-                        .overlay(content: {
-                            Spacer()
-                            ProgressView()
-                                .progressViewStyle(.circular)
-                            Spacer()
-                        })
+            ZStack(alignment: .bottomLeading) {
+                AsyncImage(url: url) { phase in
+                    if let image = phase.image {
+                        image.resizable(resizingMode: .stretch)
+                    } else if phase.error != nil {
+                        Color.red // Indicates an error.
+                    } else {
+                        Rectangle()
+                            .fill(Color.gray.gradient.opacity(0.2)) // Acts as a placeholder.
+                            .overlay(content: {
+                                Spacer()
+                                ProgressView()
+                                    .progressViewStyle(.circular)
+                                Spacer()
+                            })
+                    }
                 }
+                .clipShape(RoundedRectangle(cornerRadius: 25.0))
+                
+                VStack(alignment: .leading) {
+                    Text(gallery.title)
+                    Text(gallery.filterdDate)
+                    Text("count: \(gallery.images?.count ?? 0)")
+                }
+                .lineLimit(1)
+                .font(.caption2)
+                .padding(6)
+                .background(.ultraThinMaterial, in: UnevenRoundedRectangle(cornerRadii: RectangleCornerRadii(topTrailing: 6)))
             }
-            .clipShape(RoundedRectangle(cornerRadius: 25.0))
         }
     }
 }
@@ -120,30 +135,47 @@ struct SearchView: View {
 struct SearchView_Preview : PreviewProvider {
     
     @StateObject static var stubbedSearchVM: SearchViewModel = {
-        let vm = SearchViewModel()
-        vm.phase = .success(Gallery.stubs)
-        return vm
+//        let vm = SearchViewModel()
+//        vm.phase = .success(Gallery.stubs)
+//        return vm
+        var mock = MockSearchAPI()
+        mock.stubbedSearchedTickersCallback = { Gallery.stubs }
+        return SearchViewModel(query: "Apple", imgurAPI: mock)
     }()
     
     @StateObject static var emptySearchVM: SearchViewModel = {
-        let vm = SearchViewModel()
-        vm.query = "Apple"
-        vm.phase = .empty
-        return vm
+//        let vm = SearchViewModel()
+//        vm.query = "Apple"
+//        vm.phase = .empty
+//        return vm
+        var mock = MockSearchAPI()
+        mock.stubbedSearchedTickersCallback = { [] }
+        return SearchViewModel(query: "Thanos", imgurAPI: mock)
     }()
     
     @StateObject static var loadingSearchVM: SearchViewModel = {
-        let vm = SearchViewModel()
-        vm.query = "HeyEmptysdnasjdfn"
-        vm.phase = .fetching
-        return vm
+//        let vm = SearchViewModel()
+//        vm.query = "HeyEmptysdnasjdfn"
+//        vm.phase = .fetching
+//        return vm
+        var mock = MockSearchAPI()
+        mock.stubbedSearchedTickersCallback = {
+            await withCheckedContinuation { _ in }
+        }
+        return SearchViewModel(query: "Apple", imgurAPI: mock)
     }()
     
     @StateObject static var errorSearchVM: SearchViewModel = {
-        let vm = SearchViewModel()
+//        let vm = SearchViewModel()
+//        
+//        vm.phase = .failure(NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "An Error has been occured"]))
+//        return vm
         
-        vm.phase = .failure(NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "An Error has been occured"]))
-        return vm
+        var mock = MockSearchAPI()
+        mock.stubbedSearchedTickersCallback = {
+            throw NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey : "An Error has been occured"])
+        }
+        return SearchViewModel(query: "Apple", imgurAPI: mock)
     }()
     
     static var previews: some View {
