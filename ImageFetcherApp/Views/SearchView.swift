@@ -25,25 +25,28 @@ struct SearchView: View {
     
     var body: some View {
         
-        imageContainer
-            .padding(.horizontal)
-            .searchable(text: $searchVM.query, placement: .navigationBarDrawer(displayMode: .always))
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationTitle("Switch Animation")
-            .toolbar(content: {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: {
-                        listSelection.toggle()
-                    }, label: {
-                        Text(listSelection ? "List" : "Grid")
-                    })
+        VStack {
+            SearchBarView(searchText: $searchVM.query)
+            
+            imageContainer
+                .padding(.horizontal)
+            //                .searchable(text: $searchVM.query, placement: .navigationBarDrawer(displayMode: .always))
+                .navigationBarTitleDisplayMode(.inline)
+                .navigationTitle("Switch Animation")
+                .toolbar(content: {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button(action: {
+                            listSelection.toggle()
+                        }, label: {
+                            Text(listSelection ? "List" : "Grid")
+                        })
+                    }
+                })
+            
+                .overlay {
+                    listSearchOverLay
                 }
-            })
-            
-            .overlay {
-                listSearchOverLay
-            }
-            
+        }
     }
     
     @ViewBuilder
@@ -72,7 +75,6 @@ struct SearchView: View {
     @ViewBuilder
     private var listSearchOverLay: some View {
         switch searchVM.phase {
-            
         case .fetching:
             LoadingStateView()
             
@@ -126,7 +128,9 @@ struct SearchView: View {
                 .lineLimit(1)
                 .font(.caption2)
                 .padding(6)
+                
                 .background(.ultraThinMaterial, in: UnevenRoundedRectangle(cornerRadii: RectangleCornerRadii(topTrailing: 6)))
+                .clipped()
             }
         }
     }
@@ -135,29 +139,29 @@ struct SearchView: View {
 struct SearchView_Preview : PreviewProvider {
     
     @StateObject static var stubbedSearchVM: SearchViewModel = {
-//        let vm = SearchViewModel()
-//        vm.phase = .success(Gallery.stubs)
-//        return vm
+        //        let vm = SearchViewModel()
+        //        vm.phase = .success(Gallery.stubs)
+        //        return vm
         var mock = MockSearchAPI()
         mock.stubbedSearchedTickersCallback = { Gallery.stubs }
         return SearchViewModel(query: "Apple", imgurAPI: mock)
     }()
     
     @StateObject static var emptySearchVM: SearchViewModel = {
-//        let vm = SearchViewModel()
-//        vm.query = "Apple"
-//        vm.phase = .empty
-//        return vm
+        //        let vm = SearchViewModel()
+        //        vm.query = "Apple"
+        //        vm.phase = .empty
+        //        return vm
         var mock = MockSearchAPI()
         mock.stubbedSearchedTickersCallback = { [] }
         return SearchViewModel(query: "Thanos", imgurAPI: mock)
     }()
     
     @StateObject static var loadingSearchVM: SearchViewModel = {
-//        let vm = SearchViewModel()
-//        vm.query = "HeyEmptysdnasjdfn"
-//        vm.phase = .fetching
-//        return vm
+        //        let vm = SearchViewModel()
+        //        vm.query = "HeyEmptysdnasjdfn"
+        //        vm.phase = .fetching
+        //        return vm
         var mock = MockSearchAPI()
         mock.stubbedSearchedTickersCallback = {
             await withCheckedContinuation { _ in }
@@ -166,10 +170,10 @@ struct SearchView_Preview : PreviewProvider {
     }()
     
     @StateObject static var errorSearchVM: SearchViewModel = {
-//        let vm = SearchViewModel()
-//        
-//        vm.phase = .failure(NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "An Error has been occured"]))
-//        return vm
+        //        let vm = SearchViewModel()
+        //
+        //        vm.phase = .failure(NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "An Error has been occured"]))
+        //        return vm
         
         var mock = MockSearchAPI()
         mock.stubbedSearchedTickersCallback = {
@@ -183,25 +187,25 @@ struct SearchView_Preview : PreviewProvider {
             NavigationStack {
                 SearchView(searchVM: stubbedSearchVM)
             }
-            .searchable(text: $stubbedSearchVM.query)
+            //            .searchable(text: $stubbedSearchVM.query)
             .previewDisplayName("Results")
             
             NavigationStack {
                 SearchView(searchVM: emptySearchVM)
             }
-            .searchable(text: $emptySearchVM.query)
+            //            .searchable(text: $emptySearchVM.query)
             .previewDisplayName("Empty Results")
             
             NavigationStack {
                 SearchView(searchVM: loadingSearchVM)
             }
-            .searchable(text: $loadingSearchVM.query)
+            //            .searchable(text: $loadingSearchVM.query)
             .previewDisplayName("Loading Results")
             
             NavigationStack {
                 SearchView(searchVM: errorSearchVM)
             }
-            .searchable(text: $errorSearchVM.query)
+            //            .searchable(text: $errorSearchVM.query)
             .previewDisplayName("Error Results")
         }
     }
