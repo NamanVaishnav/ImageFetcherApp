@@ -57,4 +57,18 @@ Main screen has 4 phase :
   
   <img width="897" alt="Screenshot 2024-01-03 at 4 52 51 PM" src="https://github.com/NamanVaishnav/ImageFetcherApp/assets/6386216/21bd9ea0-4d8e-4a03-a5fb-0aeeeff66d1b">
 
+
+In App we have toggle option to switch from Grid to List 
+
+- Grid
   
+![Simulator Screenshot - iPhone 15 Pro - 2024-01-03 at 17 09 56](https://github.com/NamanVaishnav/ImageFetcherApp/assets/6386216/53955479-d744-41ea-a0fb-0528289cf1e1)
+
+- List
+
+  ![Simulator Screenshot - iPhone 15 Pro - 2024-01-03 at 17 08 43](https://github.com/NamanVaishnav/ImageFetcherApp/assets/6386216/8fb2b9ca-b408-4b0f-b651-b65faa23618c)
+
+
+  
+
+
