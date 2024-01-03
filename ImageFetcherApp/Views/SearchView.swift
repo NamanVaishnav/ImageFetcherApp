@@ -42,7 +42,6 @@ struct SearchView: View {
                         })
                     }
                 })
-            
                 .overlay {
                     listSearchOverLay
                 }
@@ -128,9 +127,7 @@ struct SearchView: View {
                 .lineLimit(1)
                 .font(.caption2)
                 .padding(6)
-                
                 .background(.ultraThinMaterial, in: UnevenRoundedRectangle(cornerRadii: RectangleCornerRadii(topTrailing: 6)))
-                .clipped()
             }
         }
     }
@@ -139,47 +136,47 @@ struct SearchView: View {
 struct SearchView_Preview : PreviewProvider {
     
     @StateObject static var stubbedSearchVM: SearchViewModel = {
-        //        let vm = SearchViewModel()
-        //        vm.phase = .success(Gallery.stubs)
-        //        return vm
-        var mock = MockSearchAPI()
-        mock.stubbedSearchedTickersCallback = { Gallery.stubs }
-        return SearchViewModel(query: "Apple", imgurAPI: mock)
+        let vm = SearchViewModel()
+        vm.phase = .success(Gallery.stubs)
+        return vm
+        //        var mock = MockSearchAPI()
+        //        mock.stubbedSearchedTickersCallback = { Gallery.stubs }
+        //        return SearchViewModel(query: "Apple", imgurAPI: mock)
     }()
     
     @StateObject static var emptySearchVM: SearchViewModel = {
-        //        let vm = SearchViewModel()
-        //        vm.query = "Apple"
-        //        vm.phase = .empty
-        //        return vm
-        var mock = MockSearchAPI()
-        mock.stubbedSearchedTickersCallback = { [] }
-        return SearchViewModel(query: "Thanos", imgurAPI: mock)
+        let vm = SearchViewModel()
+        vm.query = "Apple"
+        vm.phase = .empty
+        return vm
+        //        var mock = MockSearchAPI()
+        //        mock.stubbedSearchedTickersCallback = { [] }
+        //        return SearchViewModel(query: "Thanos", imgurAPI: mock)
     }()
     
     @StateObject static var loadingSearchVM: SearchViewModel = {
-        //        let vm = SearchViewModel()
-        //        vm.query = "HeyEmptysdnasjdfn"
-        //        vm.phase = .fetching
-        //        return vm
-        var mock = MockSearchAPI()
-        mock.stubbedSearchedTickersCallback = {
-            await withCheckedContinuation { _ in }
-        }
-        return SearchViewModel(query: "Apple", imgurAPI: mock)
+        let vm = SearchViewModel()
+        vm.query = "HeyEmptysdnasjdfn"
+        vm.phase = .fetching
+        return vm
+        //        var mock = MockSearchAPI()
+        //        mock.stubbedSearchedTickersCallback = {
+        //            await withCheckedContinuation { _ in }
+        //        }
+        //        return SearchViewModel(query: "Apple", imgurAPI: mock)
     }()
     
     @StateObject static var errorSearchVM: SearchViewModel = {
-        //        let vm = SearchViewModel()
-        //
-        //        vm.phase = .failure(NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "An Error has been occured"]))
-        //        return vm
+        let vm = SearchViewModel()
         
-        var mock = MockSearchAPI()
-        mock.stubbedSearchedTickersCallback = {
-            throw NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey : "An Error has been occured"])
-        }
-        return SearchViewModel(query: "Apple", imgurAPI: mock)
+        vm.phase = .failure(NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "An Error has been occured"]))
+        return vm
+        
+        //        var mock = MockSearchAPI()
+        //        mock.stubbedSearchedTickersCallback = {
+        //            throw NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey : "An Error has been occured"])
+        //        }
+        //        return SearchViewModel(query: "Apple", imgurAPI: mock)
     }()
     
     static var previews: some View {
